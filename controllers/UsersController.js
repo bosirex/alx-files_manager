@@ -1,10 +1,10 @@
 import sha1 from 'sha1';
 import { ObjectId } from 'mongodb';
-import redisClient from '../utils/redis';
+import { redisClient } from '../utils/redis';
 import dbClient from '../utils/db';
 
 class UsersController {
-  static async postNew (request, response) {
+  static async postNew(request, response) {
     const { email, password } = request.body;
     if (!email) {
       response.status(400).json({ error: 'Missing email' });
@@ -17,16 +17,16 @@ class UsersController {
 
     try {
       const collection = dbClient.db.collection('users');
-      const user_1 = await collection.findOne({ email });
+      const user1 = await collection.findOne({ email });
 
-      if (user_1) {
+      if (user1) {
         response.status(400).json({ error: 'Already exist' });
       } else {
         collection.insertOne({ email, password: hashPsswd });
-        const new_User = await collection.findOne(
-          { email }, { projection: { email: 1 } }
+        const newUser = await collection.findOne(
+          { email }, { projection: { email: 1 } },
         );
-        response.status(201).json({ id: new_User._id, email: new_User.email });
+        response.status(201).json({ id: newUser._id, email: newUser.email });
       }
     } catch (error) {
       console.log(error);
@@ -34,7 +34,7 @@ class UsersController {
     }
   }
 
-  static async getMe (request, response) {
+  static async getMe(request, response) {
     try {
       const userToken = request.header('X-Token');
       const authKey = `auth_${userToken}`;
