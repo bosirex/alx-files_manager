@@ -1,10 +1,13 @@
 import sha1 from 'sha1';
 import { v4 as uuidv4 } from 'uuid';
 import dbClient from '../utils/db';
-import redisClient from '../utils/redis';
+import { redisClient } from '../utils/redis';
 
 class AuthController {
-  static async getConnect (request, response) {
+  /**
+   * Should sign-in the user by generating a new authentication token
+   */
+  static async getConnect(request, response) {
     const authHeader = request.headers.authorization;
     if (!authHeader) {
       response.status(401).json({ error: 'Unauthorized' });
@@ -37,7 +40,7 @@ class AuthController {
     }
   }
 
-  static async getDisconnect (request, response) {
+  static async getDisconnect(request, response) {
     try {
       const userToken = request.header('X-Token');
       // console.log('USER TOKEN DISCONNECT', userToken);
